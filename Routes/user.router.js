@@ -38,14 +38,18 @@ userRouter.post("/login",async(req,res)=>{
         }else{
             const hash_pass=user[0].password
             bcrypt.compare(password,hash_pass,async(req,result)=>{
-                if(result){
-                    const token = jwt.sign({userID:user[0]._id},process.env.normal_secret,{expiresIn:"1d"})
-                    const ref_token = jwt.sign({userID:user._id},process.env.refresh_secret,{expiresIn:"7d"})
-                    res.send({"Msg":"Login Successful",token,ref_token,firstname:user[0].firstName,lastName:user[0].lastName})
-                }else{
-                    res.send("Login failed")
-                }
-                
+                try {
+                    if(result){
+                        const token = jwt.sign({userID:user[0]._id},process.env.normal_secret,{expiresIn:"1d"})
+                        const ref_token = jwt.sign({userID:user._id},process.env.refresh_secret,{expiresIn:"7d"})
+                        res.send({"Msg":"Login Successful",token,ref_token,firstname:user[0].firstName,lastName:user[0].lastName})
+                    }else{
+                        res.send("Login failed")
+                    }
+                    
+                } catch (error) {
+                    console.log(error)
+                }        
             })
         }
         
